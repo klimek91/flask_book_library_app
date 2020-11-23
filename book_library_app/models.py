@@ -17,3 +17,5 @@ class AuthorSchema(Schema):
     first_name = fields.String()
     last_name = fields.String()
     birth_date = fields.Date('%d-%m-%Y')
+
+author_schema = AuthorSchema()
