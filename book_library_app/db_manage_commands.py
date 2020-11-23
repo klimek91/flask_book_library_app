@@ -30,4 +30,9 @@ def add_data():
 @db_manage.command()
 def remove_data():
     """Remove all data from the database"""
-    pass
+    try:
+        db.session.execute('TRUNCATE TABLE authors')
+        db.session.commit()
+        print("Data has been successfully removed from database")
+    except Exception as exc:
+        print("Unexpected error: {}".format(exc))
