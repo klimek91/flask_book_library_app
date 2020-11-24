@@ -17,7 +17,7 @@ def get_authors():
 
 @app.route('/api/v1/authors/<int:author_id>', methods=['GET'])
 def get_author(author_id: int):
-    author = Author.query.get_or_404(author_id, description=f"Author with id{author_id} not found!")
+    author = Author.query.get_or_404(author_id, description=f"Author with id {author_id} not found!")
     return jsonify({
         'success':True,
         'data': author_schema.dump(author),
