@@ -18,3 +18,8 @@ class ErrorResponse:
 def not_found_error(err):
     return ErrorResponse(err.description, 404).to_response()
 
+@app.errorhandler(400)
+def bad_request_error(err):
+    messeges = err.data.get('messages',{}).get('json', {})
+    return ErrorResponse(messeges, 400).to_response()
+
