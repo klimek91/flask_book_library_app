@@ -1,4 +1,4 @@
-from book_library_app import app
+from book_library_app import app, db
 from flask import Response, jsonify
 
 class ErrorResponse:
@@ -23,3 +23,11 @@ def bad_request_error(err):
     messeges = err.data.get('messages',{}).get('json', {})
     return ErrorResponse(messeges, 400).to_response()
 
+@app.errorhandler(415)
+def unsupported_media_type_error(err):
+    return ErrorResponse(err.description, 415).to_response()
+
+@app.errorhandler(500)
+def internal_server_error(err):
+    db.session.rollback()
+    return ErrorResponse(err.description, 500).to_response()

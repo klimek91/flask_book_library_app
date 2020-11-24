@@ -4,6 +4,7 @@ from book_library_app.models import Author, AuthorSchema, author_schema
 from webargs.flaskparser import use_args
 from book_library_app.utils import validate_json_content_type
 
+
 @app.route('/api/v1/authors', methods=['GET'])
 def get_authors():
     authors = Author.query.all()
