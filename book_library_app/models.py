@@ -1,6 +1,7 @@
 from book_library_app import db
 from marshmallow import Schema, fields, validate, validates, ValidationError
 from datetime import datetime
+from flask_sqlalchemy import BaseQuery
 
 
 class Author(db.Model):
@@ -19,6 +20,19 @@ class Author(db.Model):
         if fields:
             schema_args['only'] = [field for field in fields.split(',') if field in Author.__table__.columns]
         return schema_args
+
+    @staticmethod
+    def apply_order(query: BaseQuery, sort_keys:str) -> BaseQuery:
+        if sort_keys:
+            for key in sort_keys.split(','):
+                descending = False
+                if key.startswith(('-')):
+                    key = key[1:]
+                    descending = True
+                column_attr = getattr(Author, key, None)
+                if column_attr is not None:
+                    query = query.order_by(column_attr.desc()) if descending else query.order_by(column_attr)
+        return query
 
 
 

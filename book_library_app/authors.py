@@ -7,8 +7,10 @@ from book_library_app.utils import validate_json_content_type
 
 @app.route('/api/v1/authors', methods=['GET'])
 def get_authors():
-    authors = Author.query.all()
+    query = Author.query
     schema_args = Author.get_schema_args(request.args.get('fields'))
+    query = Author.apply_order(query, request.args.get('sort'))
+    authors = query.all()
     author_schema = AuthorSchema(**schema_args)
 
     return jsonify({
