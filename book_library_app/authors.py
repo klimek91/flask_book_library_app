@@ -55,7 +55,12 @@ def update_author(args:dict, author_id: int):
 
 @app.route('/api/v1/authors/<int:author_id>', methods=['DELETE'])
 def delete_author(author_id: int):
+    author = Author.query.get_or_404(author_id, description=f'Author with id {author_id} not found')
+
+    db.session.delete(author)
+    db.session.commit()
+
     return jsonify({
         'success':True,
-        'data':f'Author with id {author_id} has been deleted (test message)'
+        'data':f'Author with {author_id} has been deleted!'
     })
