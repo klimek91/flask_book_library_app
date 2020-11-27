@@ -2,6 +2,7 @@ from book_library_app import db
 from marshmallow import Schema, fields, validate, validates, ValidationError
 from datetime import datetime
 from flask_sqlalchemy import BaseQuery
+from werkzeug.datastructures import ImmutableDict
 
 
 class Author(db.Model):
@@ -34,6 +35,19 @@ class Author(db.Model):
                     query = query.order_by(column_attr.desc()) if descending else query.order_by(column_attr)
         return query
 
+    @staticmethod
+    def apply_filter(query: BaseQuery, params:ImmutableDict) -> BaseQuery:
+        for param, value in params.items():
+            if param not in {'fields', 'sort'}:
+                column_attr = getattr(Author, param, None)
+                if column_attr is not None:
+                    if param == 'birth_date':
+                        try:
+                            value = datetime.strptime(value, '%d-%m-%Y').date()
+                        except ValueError:
+                            continue
+                    query = query.filter(column_attr == value)
+        return query
 
 
 class AuthorSchema(Schema):

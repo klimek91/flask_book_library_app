@@ -10,6 +10,7 @@ def get_authors():
     query = Author.query
     schema_args = Author.get_schema_args(request.args.get('fields'))
     query = Author.apply_order(query, request.args.get('sort'))
+    query = Author.apply_filter(query, request.args)
     authors = query.all()
     author_schema = AuthorSchema(**schema_args)
 
