@@ -21,7 +21,7 @@ class Author(db.Model):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     birth_date = db.Column(db.Date, nullable=False)
-    books = db.relationship('Book', back_populates='author', cascade='all, delete_orphan')
+    books = db.relationship('Book', back_populates='author', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<{self.__class__.__name__}>:{self.first_name} {self.last_name}'
@@ -99,7 +99,7 @@ class Author(db.Model):
 
 
 class Book(db.Model):
-    __tablename__ = "book"
+    __tablename__ = "books"
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(50), nullable=False)
     isbn = db.Column(db.BigInteger(), nullable=False, unique=True)
