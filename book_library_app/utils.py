@@ -1,4 +1,4 @@
-from flask import request, url_for
+from flask import request, url_for, current_app
 from werkzeug.exceptions import UnsupportedMediaType
 from functools import wraps
 from flask_sqlalchemy import DefaultMeta, BaseQuery
@@ -7,6 +7,8 @@ from sqlalchemy.sql.expression import BinaryExpression
 import re
 from config import Config
 from typing import Tuple
+from datetime import datetime
+
 
 COMPARISON_OPERATORS_RE = re.compile(r'(.*)\[(gte|gt|lte|lt)\]')
 
@@ -33,13 +35,13 @@ def apply_order(model : DefaultMeta, query: BaseQuery) -> BaseQuery:
     sort_keys = request.args.get('sort')
     if sort_keys:
         for key in sort_keys.split(','):
-            descending = False
-            if key.startswith(('-')):
+            desc = False
+            if key.startswith('-'):
                 key = key[1:]
-                descending = True
+                desc = True
             column_attr = getattr(model, key, None)
             if column_attr is not None:
-                query = query.order_by(column_attr.desc()) if descending else query.order_by(column_attr)
+                query = query.order_by(column_attr.desc()) if desc else query.order_by(column_attr)
     return query
 
 
@@ -55,7 +57,7 @@ def _get_filter_argument(column_name: InstrumentedAttribute, value:str, operator
 
 
 
-def apply_filter(model : DefaultMeta, query: BaseQuery) -> BaseQuery:
+def apply_filter(model: DefaultMeta, query: BaseQuery) -> BaseQuery:
     for param, value in request.args.items():
         if param not in {'fields', 'sort', 'page', 'limit'}:
             operator = '=='
@@ -75,7 +77,7 @@ def apply_filter(model : DefaultMeta, query: BaseQuery) -> BaseQuery:
 
 def get_pagination(query: BaseQuery, func_name: str) -> Tuple[list, dict]:
     page = request.args.get('page', 1, type=int)
-    limit = request.args.get('limit', Config.PER_PAGE, type=int)
+    limit = request.args.get('limit', current_app.config.get('PER_PAGE', 5), type=int)
     params = {key:value for key,value in request.args.items() if key != 'page'}
     paginate_obj = query.paginate(page, limit, False)
     pagination = {
