@@ -69,3 +69,17 @@ def delete_book(book_id: int):
         'success':True,
         'data':f'Book with {book_id} has been deleted!'
     })
+
+
+@books_bp.route('/authors/<int:author_id>/books', methods=['GET'])
+def get_all_author_books(author_id: int):
+    Author.query.get_or_404(author_id, description=f'Book with id {author_id} not found')
+    books = Book.query.filter(Book.author_id == author_id).all()
+
+    items = BookSchema(many=True, exclude=['author']).dump(books)
+
+    return jsonify({
+        'success':True,
+        'data': items,
+        'number_of_records': len(items)
+    })
