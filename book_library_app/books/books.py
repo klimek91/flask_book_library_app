@@ -48,11 +48,24 @@ def update_book(args, book_id: int):
         book.description = description
     author_id = args.get('author_id')
     if author_id is not None:
-        Author.query.get_or_404(author_id, description=f"Author with id {book_id} not found!")
+        Author.query.get_or_404(author_id, description=f"Author with id {author_id} not found!")
         book.author_id = author_id
 
     db.session.commit()
     return jsonify({
         'success':True,
         'data': book_schema.dump(book),
+    })
+
+
+@books_bp.route('/books/<int:book_id>', methods=['DELETE'])
+def delete_book(book_id: int):
+    book = Book.query.get_or_404(book_id, description=f'Book with id {book_id} not found')
+
+    db.session.delete(book)
+    db.session.commit()
+
+    return jsonify({
+        'success':True,
+        'data':f'Book with {book_id} has been deleted!'
     })
