@@ -80,6 +80,14 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     creation_date = db.Column(db.DateTime, default=datetime.utcnow)
 
+class UserSchema(Schema):
+    id = fields.Integer(dump_only=True)
+    username = fields.String(required=True, validate=validate.Length(max=255))
+    email = fields.Email(required=True)
+    password = fields.String(required=True, load_only=True, validate=validate.Length(min=6, max=255))
+    creation_date = fields.DateTime(dump_only=True)
+
 
 author_schema = AuthorSchema()
 book_schema = BookSchema()
+user_schema = UserSchema()
