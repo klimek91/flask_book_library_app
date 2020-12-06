@@ -1,7 +1,7 @@
 """books table
 
 Revision ID: c29754aef986
-Revises: 3367e06deb70
+Revises: 3367e06deb70 changed to NONE
 Create Date: 2020-11-28 15:34:10.065892
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
 revision = 'c29754aef986'
-down_revision = '3367e06deb70'
+down_revision = '960942956131'
 branch_labels = None
 depends_on = None
 
